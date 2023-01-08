@@ -16,11 +16,6 @@ limitations under the License.
 
 package logtypes
 
-import (
-	"context"
-	"os"
-)
-
 // PodLog contains select metadata around a Kubernetes/OpenShift pod
 type PodLog struct {
 	User      string `json:"user,omitempty"`
@@ -58,46 +53,4 @@ type Result struct {
 	ScannerVersion string `json:"scannerVersion"`
 	SignatureName  string `json:"signatureName"`
 	Timestamp      int64  `json:"timestamp"`
-}
-
-const DefaultResultsAPIVersion = "v1alpha"
-
-type Severity string
-
-var (
-	SeverityLow       Severity = "low"
-	SeverityModerate  Severity = "moderate"
-	SeverityImportant Severity = "important"
-	SeverityCritical  Severity = "critical"
-)
-
-// Summary represents a severy of a given result. The result can have multiple severieties
-// defined.
-type Summary struct {
-	// Label is the human readable severity (high, important, etc.)
-	Label Severity
-}
-
-var (
-	ScanOptions = []string{"clamav"}
-)
-
-// APIVersions holds a slice of supported API versions.
-type APIVersions struct {
-	// Versions is the supported API versions
-	Versions []string `json:"versions"`
-}
-
-// FilesFilter desribes callback to filter files.
-type FilesFilter func(string, os.FileInfo) bool
-
-// Scanner interface that all scanners should define.
-type Scanner interface {
-	// Scan will perform a scan on the given path for the given Image.
-	// It should return compacted results for JSON serialization and additionally scanner
-	// specific results with more details. The context object can be used to cancel the scanning process.
-	Scan(ctx context.Context, path string, filter FilesFilter) ([]Result, interface{}, error)
-
-	// Name is the scanner's name
-	Name() string
 }
